@@ -3,12 +3,14 @@ const r = require("raylib");
 const WIDTH = 600;
 const HEIGHT = 400;
 const SCANNERWIDTH = 50;
-const PARTICLEFIELDSTART = 270;
-const PARTICLEFIELDEND = PARTICLEFIELDSTART + (SCANNERWIDTH * 2);
+const PARTICLEFIELD1START = 170;
+const PARTICLEFIELD1END = PARTICLEFIELD1START + (SCANNERWIDTH * 2);
+const PARTICLEFIELD2START = 400;
+const PARTICLEFIELD2END = PARTICLEFIELD2START + (SCANNERWIDTH / 2);
 const TOPY = 0;
 const SPEED = 1;
 
-let rectX = 0;
+let scannerX = 0;
 let currentSpeed = SPEED;
 
 function running() {
@@ -21,31 +23,36 @@ function setup() {
 }
 
 function update() {
-    rectX += calcSpeed();
+    scannerX += calcSpeed();
 }
 
 function calcSpeed() {
-    if (rectX === WIDTH - SCANNERWIDTH) {
+    if (scannerX === WIDTH - SCANNERWIDTH) {
         currentSpeed = -SPEED;
     }
-    if (rectX === 0) {
+    if (scannerX === 0) {
         currentSpeed = SPEED;
     }
     return currentSpeed;
 }
 
-function isOverlap() {
-    return ((rectX >= PARTICLEFIELDSTART && rectX <= PARTICLEFIELDEND) ||
-        (rectX + SCANNERWIDTH >= PARTICLEFIELDSTART && rectX + SCANNERWIDTH <= PARTICLEFIELDEND))
+function isOverlap(start1, end1, start2, end2) {
+    return start1 <= end2 && end1 >= start2;
+}
+
+function selectColor() {
+    return (isOverlap(scannerX, scannerX + SCANNERWIDTH, PARTICLEFIELD1START, PARTICLEFIELD1END) ||
+        isOverlap(scannerX, scannerX + SCANNERWIDTH, PARTICLEFIELD2START, PARTICLEFIELD2END)) ? r.RED : r.WHITE;
 }
 
 function draw() {
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
-    r.DrawRectangle(PARTICLEFIELDSTART, TOPY, PARTICLEFIELDEND - PARTICLEFIELDSTART, HEIGHT, r.SKYBLUE);
-    const COLOR = isOverlap() ? r.RED : r.WHITE;
-    r.DrawRectangle(rectX, TOPY, SCANNERWIDTH, HEIGHT, COLOR);
+    r.DrawRectangle(PARTICLEFIELD1START, TOPY, PARTICLEFIELD1END - PARTICLEFIELD1START, HEIGHT, r.SKYBLUE);
+    r.DrawRectangle(PARTICLEFIELD2START, TOPY, PARTICLEFIELD2END - PARTICLEFIELD2START, HEIGHT, r.SKYBLUE);
+    const COLOR = selectColor();
+    r.DrawRectangle(scannerX, TOPY, SCANNERWIDTH, HEIGHT, COLOR);
 
     r.EndDrawing();
 }
