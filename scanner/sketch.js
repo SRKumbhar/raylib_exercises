@@ -2,12 +2,14 @@ const r = require("raylib");
 
 const WIDTH = 600;
 const HEIGHT = 400;
-const RECTY = 0;
 const SCANNERWIDTH = 50;
+const PARTICLEFIELDSTART = 170;
+const PARTICLEFIELDEND = PARTICLEFIELDSTART + (SCANNERWIDTH * 2);
+const TOPY = 0;
 const SPEED = 5;
 
 let rectX = 0;
-let currentSpeed = 5;
+let currentSpeed = SPEED;
 
 function running() {
     return !r.WindowShouldClose();
@@ -35,7 +37,8 @@ function calcSpeed() {
 function draw() {
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
-    r.DrawRectangle(rectX, RECTY, SCANNERWIDTH, HEIGHT, r.WHITE);
+    r.DrawRectangle(PARTICLEFIELDSTART, TOPY, PARTICLEFIELDEND - PARTICLEFIELDSTART, HEIGHT, r.SKYBLUE);
+    r.DrawRectangle(rectX, TOPY, SCANNERWIDTH, HEIGHT, r.WHITE);
     r.EndDrawing();
 }
 
