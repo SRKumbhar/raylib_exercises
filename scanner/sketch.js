@@ -6,7 +6,7 @@ const SCANNERWIDTH = 50;
 const PARTICLEFIELDSTART = 170;
 const PARTICLEFIELDEND = PARTICLEFIELDSTART + (SCANNERWIDTH * 2);
 const TOPY = 0;
-const SPEED = 5;
+const SPEED = 1;
 
 let rectX = 0;
 let currentSpeed = SPEED;
@@ -34,11 +34,19 @@ function calcSpeed() {
     return currentSpeed;
 }
 
+function isOverlap() {
+    return ((rectX >= PARTICLEFIELDSTART && rectX <= PARTICLEFIELDEND) ||
+        (rectX + SCANNERWIDTH >= PARTICLEFIELDSTART && rectX + SCANNERWIDTH <= PARTICLEFIELDEND))
+}
+
 function draw() {
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
+
     r.DrawRectangle(PARTICLEFIELDSTART, TOPY, PARTICLEFIELDEND - PARTICLEFIELDSTART, HEIGHT, r.SKYBLUE);
-    r.DrawRectangle(rectX, TOPY, SCANNERWIDTH, HEIGHT, r.WHITE);
+    const COLOR = isOverlap() ? r.RED : r.WHITE;
+    r.DrawRectangle(rectX, TOPY, SCANNERWIDTH, HEIGHT, COLOR);
+
     r.EndDrawing();
 }
 
