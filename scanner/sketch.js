@@ -8,11 +8,12 @@ const PARTICLEFIELD1END = PARTICLEFIELD1START + (SCANNERWIDTH * 2);
 const PARTICLEFIELD2START = 400;
 const PARTICLEFIELD2END = PARTICLEFIELD2START + (SCANNERWIDTH / 2);
 const TOPY = 0;
-const SPEED = 1;
+const SPEED = 3;
 
-let scannerX = 0;
-let currentSpeed = SPEED;
-
+let scannerX1 = 0;
+let scannerX2 = WIDTH / 2;
+let currentSpeedScanner1 = SPEED;
+let currentSpeedScanner2 = SPEED + 3;
 function running() {
     return !r.WindowShouldClose();
 }
@@ -23,26 +24,28 @@ function setup() {
 }
 
 function update() {
-    scannerX += calcSpeed();
+    scannerX1 += calcSpeed("Scanner1");
+    scannerX2 += calcSpeed("Scanner2");
 }
 
-function calcSpeed() {
-    if (scannerX === WIDTH - SCANNERWIDTH) {
-        currentSpeed = -SPEED;
+function calcSpeed(scanner) {
+    if (scanner === "Scanner1") {
+        if (scannerX1 >= WIDTH / 2 - SCANNERWIDTH) currentSpeedScanner1 = -SPEED;
+        if (scannerX1 <= 0) currentSpeedScanner1 = SPEED;
+        return currentSpeedScanner1;
     }
-    if (scannerX === 0) {
-        currentSpeed = SPEED;
-    }
-    return currentSpeed;
+    if (scannerX2 >= WIDTH - SCANNERWIDTH) currentSpeedScanner2 = -(SPEED + 3);
+    if (scannerX2 <= WIDTH / 2) currentSpeedScanner2 = SPEED + 3;
+    return currentSpeedScanner2;
 }
 
 function isOverlap(start1, end1, start2, end2) {
     return start1 <= end2 && end1 >= start2;
 }
 
-function selectColor() {
-    return (isOverlap(scannerX, scannerX + SCANNERWIDTH, PARTICLEFIELD1START, PARTICLEFIELD1END) ||
-        isOverlap(scannerX, scannerX + SCANNERWIDTH, PARTICLEFIELD2START, PARTICLEFIELD2END)) ? r.RED : r.WHITE;
+function selectScannerColor(scanner) {
+    return (isOverlap(scanner, scanner + SCANNERWIDTH, PARTICLEFIELD1START, PARTICLEFIELD1END) ||
+        isOverlap(scanner, scanner + SCANNERWIDTH, PARTICLEFIELD2START, PARTICLEFIELD2END)) ? r.RED : r.WHITE;
 }
 
 function draw() {
@@ -51,8 +54,9 @@ function draw() {
 
     r.DrawRectangle(PARTICLEFIELD1START, TOPY, PARTICLEFIELD1END - PARTICLEFIELD1START, HEIGHT, r.SKYBLUE);
     r.DrawRectangle(PARTICLEFIELD2START, TOPY, PARTICLEFIELD2END - PARTICLEFIELD2START, HEIGHT, r.SKYBLUE);
-    const COLOR = selectColor();
-    r.DrawRectangle(scannerX, TOPY, SCANNERWIDTH, HEIGHT, COLOR);
+
+    r.DrawRectangle(scannerX1, TOPY, SCANNERWIDTH, HEIGHT, selectScannerColor(scannerX1));
+    r.DrawRectangle(scannerX2, TOPY, SCANNERWIDTH, HEIGHT, selectScannerColor(scannerX2));
 
     r.EndDrawing();
 }
